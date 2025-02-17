@@ -2,11 +2,18 @@
 
 </script>
 <template>
-  <main>
+  <div>
     <NuxtLayout>
-      <NuxtPage/>
+      <header>
+        <!-- // later onwards gonna replace this with a custom window thing but for now just laying this out -->
+      </header>
+      <main>
+        <NuxtPage/>
+        <!-- 20x8 -->
+      </main>
+
     </NuxtLayout>
-  </main>
+  </div>
 </template>
 <style>
 * {
@@ -20,4 +27,11 @@ body, html {
   overflow: clip;
 }
 </style>
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+main {
+  background-color: #0F0F0F;
+  width: 100vw;
+  height: 100vh;
+}
+
+</style>
