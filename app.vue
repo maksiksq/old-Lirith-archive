@@ -2,11 +2,22 @@
 
 </script>
 <template>
-  <div>
+  <main>
     <NuxtLayout>
       <NuxtPage/>
     </NuxtLayout>
-  </div>
+  </main>
 </template>
-<style></style>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  overflow: clip;
+}
+</style>
 <style scoped lang="scss"></style>
