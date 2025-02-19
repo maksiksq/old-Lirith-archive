@@ -19,6 +19,9 @@
 * {
   margin: 0;
   padding: 0;
+
+  font-family: "Montserrat Thin", sans-serif;
+  color: white;
 }
 
 body, html {
@@ -26,6 +29,12 @@ body, html {
   padding: 0;
   overflow: clip;
 }
+
+h1, h2, h3, h4, h5, h6, p {
+  font-family: "Montserrat Thin", sans-serif;
+  color: white;
+}
+
 </style>
 <style scoped lang="scss">
 main {
@@ -33,5 +42,4 @@ main {
   width: 100vw;
   height: 100vh;
 }
-
 </style>
