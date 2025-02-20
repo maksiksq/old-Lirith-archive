@@ -7,6 +7,7 @@
 </template>
 
 <script setup>
+// yoinked code for example
 import { ref, onMounted, computed } from 'vue'
 
 const scale = ref(1)
