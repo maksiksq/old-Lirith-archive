@@ -1,125 +1,116 @@
 <script setup>
-import {ref, onMounted} from "vue";
-import {info} from "@tauri-apps/plugin-log";
+import { ref, onMounted, computed } from 'vue'
 
-// conf
-
-const scale = 1;
-
-// conf
-
+const scale = ref(1)
 const translateX = ref(0)
 const translateY = ref(0)
-const iniX = ref(0);
-const iniY = ref(0);
-const isPanning = ref(false);
+const isPanning = ref(false)
+const startX = ref(0)
+const startY = ref(0)
 
-const canvasElemRef = ref(null);
+const canvas = ref(null)
 
-function test() {
-  info("ya its rewind time");
-  info(canvasElemRef.value);
-  info("huh");
-
-  const gridSize = ref(50);
-
-  info((window.innerWidth / 50).toString());
-  info("a");
-}
-
-const resizeCanvas = () => {
-  if (!canvasElemRef.value) return
-  info(canvasElemRef.value.toString());
-  canvasElemRef.value.width = window.innerWidth
-  canvasElemRef.value.height = window.innerHeight
-  drawGrid();
-}
-
-function drawGrid() {
-  const canvasElement = canvasElemRef.value;
-  const ctx = canvasElement.getContext("2d");
+// **Draws the grid dynamically**
+const drawGrid = () => {
+  const ctx = canvas.value.getContext('2d')
+  const { width, height } = canvas.value
   ctx.clearRect(0, 0, width, height)
-  const size = 50 * scale;
 
-  // this is smart af, would never have come up with this myself
-  const offsetX = translateX.value % size;
-  const offsetY = translateY.value % size;
+  const gridSize = 50 * scale.value
+  const offsetX = translateX.value % gridSize
+  const offsetY = translateY.value % gridSize
 
-  const { width, height } = canvasElement;
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)'
+  ctx.lineWidth = 1
 
-  ctx.strokeStyle = "white"
-  ctx.lineWidth = 1;
+  ctx.beginPath()
 
-  ctx.beginPath();
-
-  for (let x = offsetX; x < width; x += size) {
-    ctx.moveTo(x, 0);
-    ctx.lineTo(x, height);
-    info(x)
+  // Vertical lines
+  for (let x = offsetX; x < width; x += gridSize) {
+    ctx.moveTo(x, 0)
+    ctx.lineTo(x, height)
   }
-  for (let y = offsetY; y < height / size; y += size) {
-    ctx.moveTo(0, y);
-    ctx.lineTo(width, y);
-    info(y)
+
+  // Horizontal lines
+  for (let y = offsetY; y < height; y += gridSize) {
+    ctx.moveTo(0, y)
+    ctx.lineTo(width, y)
   }
+
   ctx.stroke()
-
 }
 
-function startPanning(e) {
-  if (e.button !== 1) {
-    return
-  }
-  isPanning.value = true;
-
-  info("middle button my lord")
-
-  iniX.value = e.clientX - translateX.value;
-  iniY.value = e.clientY - translateY.value;
-}
-
-function pan() {
-  if (isPanning.value === false) {return}
-
-  translateX.value = translateX.value - iniX.value;
-  translateY.value = translateY.value - iniY.value;
+// **Resize canvas to match window**
+const resizeCanvas = () => {
+  if (!canvas.value) return
+  canvas.value.width = window.innerWidth
+  canvas.value.height = window.innerHeight
   drawGrid()
 }
 
-function onMouseUp(e) {
-  if (e.button === 1) {
-    info("middle button ran away")
-  }
-  isPanning.value = false;
+// **Start panning with middle mouse button**
+const startPan = (event) => {
+  if (event.button !== 1) return
+  isPanning.value = true
+  startX.value = event.clientX - translateX.value
+  startY.value = event.clientY - translateY.value
+  window.addEventListener('mousemove', pan)
+  window.addEventListener('mouseup', stopPan)
+}
+
+// **Panning logic**
+const pan = (event) => {
+  if (!isPanning.value) return
+  translateX.value = event.clientX - startX.value
+  translateY.value = event.clientY - startY.value
+  drawGrid()
+}
+
+// **Stop panning**
+const stopPan = () => {
+  isPanning.value = false
+  window.removeEventListener('mousemove', pan)
+  window.removeEventListener('mouseup', stopPan)
+}
+
+// **Zoom logic**
+const zoom = (event) => {
+  const zoomIntensity = 0.1
+  const newScale = Math.min(3, Math.max(0.5, scale.value - event.deltaY * zoomIntensity * 0.01))
+  scale.value = newScale
+  drawGrid()
 }
 
 onMounted(() => {
-  resizeCanvas();
-  info("ya its rewind time");
-  window.addEventListener('resize', resizeCanvas);
-});
+  resizeCanvas()
+  window.addEventListener('resize', resizeCanvas)
+})
 </script>
 
+
 <template>
-  <div @mousedown="startPanning" @mousemove="pan" @mouseup="onMouseUp" class="the-wrapper">
-    <canvas ref="canvasElemRef" class="the-canvas"></canvas>
-    <button class="test-button" @click="test">test</button>
+  <div class="grid-container" ref="grid"
+       @mousedown="startPan"
+       @wheel.prevent="zoom">
+    <canvas ref="canvas"></canvas>
   </div>
 </template>
 
 
 <style scoped lang="scss">
-.the-wrapper {
+.grid-container {
   width: 100vw;
   height: 100vh;
-  background: #3c3c3c;
+  overflow: hidden;
+  position: relative;
+  background-color: #222;
+}
 
-  .test-button {
-    position: absolute;
-    top: 500px;
-    left: 500px;
-
-    color: black;
-  }
+canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
 </style>
