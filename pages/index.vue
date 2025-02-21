@@ -27,9 +27,18 @@ function test() {
   info("a");
 }
 
-async function drawGrid() {
+const resizeCanvas = () => {
+  if (!canvasElemRef.value) return
+  info(canvasElemRef.value.toString());
+  canvasElemRef.value.width = window.innerWidth
+  canvasElemRef.value.height = window.innerHeight
+  drawGrid();
+}
+
+function drawGrid() {
   const canvasElement = canvasElemRef.value;
   const ctx = canvasElement.getContext("2d");
+  ctx.clearRect(0, 0, width, height)
   const size = 50 * scale;
 
   // this is smart af, would never have come up with this myself
@@ -38,21 +47,27 @@ async function drawGrid() {
 
   const { width, height } = canvasElement;
 
+  ctx.strokeStyle = "white"
+  ctx.lineWidth = 1;
+
+  ctx.beginPath();
+
   for (let x = offsetX; x < width; x += size) {
     ctx.moveTo(x, 0);
     ctx.lineTo(x, height);
+    info(x)
   }
   for (let y = offsetY; y < height / size; y += size) {
     ctx.moveTo(0, y);
     ctx.lineTo(width, y);
+    info(y)
   }
-  ctx.strokeStyle = "white"
-  ctx.lineWidth = 1;
   ctx.stroke()
+
 }
 
 function startPanning(e) {
-  if (!e.button === 1) {
+  if (e.button !== 1) {
     return
   }
   isPanning.value = true;
@@ -63,19 +78,9 @@ function startPanning(e) {
   iniY.value = e.clientY - translateY.value;
 }
 
-function renderGrid() {
-  const canvasElement = canvasElemRef.value;
-
-  canvasElement.width = window.innerWidth;
-  canvasElement.height = window.innerHeight;
-
-  drawGrid();
-  if (isPanning.value) {
-    pan()
-  }
-}
-
 function pan() {
+  if (isPanning.value === false) {return}
+
   translateX.value = translateX.value - iniX.value;
   translateY.value = translateY.value - iniY.value;
   drawGrid()
@@ -89,13 +94,14 @@ function onMouseUp(e) {
 }
 
 onMounted(() => {
-  renderGrid();
+  resizeCanvas();
   info("ya its rewind time");
+  window.addEventListener('resize', resizeCanvas);
 });
 </script>
 
 <template>
-  <div @mousedown="startPanning" @mousemove="renderGrid" @mouseup="onMouseUp" class="the-wrapper">
+  <div @mousedown="startPanning" @mousemove="pan" @mouseup="onMouseUp" class="the-wrapper">
     <canvas ref="canvasElemRef" class="the-canvas"></canvas>
     <button class="test-button" @click="test">test</button>
   </div>
