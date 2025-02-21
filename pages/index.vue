@@ -10,7 +10,6 @@ const startY = ref(0)
 
 const canvas = ref(null)
 
-// **Draws the grid dynamically**
 const drawGrid = () => {
   const ctx = canvas.value.getContext('2d')
   const { width, height } = canvas.value
@@ -25,13 +24,11 @@ const drawGrid = () => {
 
   ctx.beginPath()
 
-  // Vertical lines
   for (let x = offsetX; x < width; x += gridSize) {
     ctx.moveTo(x, 0)
     ctx.lineTo(x, height)
   }
 
-  // Horizontal lines
   for (let y = offsetY; y < height; y += gridSize) {
     ctx.moveTo(0, y)
     ctx.lineTo(width, y)
@@ -40,7 +37,6 @@ const drawGrid = () => {
   ctx.stroke()
 }
 
-// **Resize canvas to match window**
 const resizeCanvas = () => {
   if (!canvas.value) return
   canvas.value.width = window.innerWidth
@@ -48,7 +44,6 @@ const resizeCanvas = () => {
   drawGrid()
 }
 
-// **Start panning with middle mouse button**
 const startPan = (event) => {
   if (event.button !== 1) return
   isPanning.value = true
@@ -58,7 +53,6 @@ const startPan = (event) => {
   window.addEventListener('mouseup', stopPan)
 }
 
-// **Panning logic**
 const pan = (event) => {
   if (!isPanning.value) return
   translateX.value = event.clientX - startX.value
@@ -66,14 +60,12 @@ const pan = (event) => {
   drawGrid()
 }
 
-// **Stop panning**
 const stopPan = () => {
   isPanning.value = false
   window.removeEventListener('mousemove', pan)
   window.removeEventListener('mouseup', stopPan)
 }
 
-// **Zoom logic**
 const zoom = (event) => {
   const zoomIntensity = 0.1
   const newScale = Math.min(3, Math.max(0.5, scale.value - event.deltaY * zoomIntensity * 0.01))
