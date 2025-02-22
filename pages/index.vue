@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
+import info from '@tauri-apps/plugin-log';
 
 const scale = ref(1)
 const translateX = ref(0)
@@ -35,6 +36,7 @@ const drawGrid = () => {
   }
 
   ctx.stroke()
+  updatePositions()
 }
 
 const resizeCanvas = () => {
@@ -73,6 +75,27 @@ const zoom = (event) => {
   drawGrid()
 }
 
+const worldElementPos = ref({ x: 500, y: 500 })
+
+const shelf = ref(null)
+
+const screenX = ref(500)
+const screenY = ref(500)
+
+
+function updatePositions() {
+  if (!shelf.value) return;
+
+  const worldX = worldElementPos.value.x
+  const worldY = worldElementPos.value.y
+
+  screenX.value = worldX * scale.value + translateX.value
+  screenY.value = worldY * scale.value + translateY.value
+
+  info(shelf.value.toString())
+  shelf.value.style.transform = `translate(${screenX}px, ${screenY}px) scale(${scale.value})`
+}
+
 onMounted(() => {
   resizeCanvas()
   window.addEventListener('resize', resizeCanvas)
@@ -86,11 +109,12 @@ onMounted(() => {
        @wheel.prevent="zoom">
     <canvas ref="canvas"></canvas>
 <!--    time to reinvent grid wahooo-->
-    <div class="shelf"
+    <div ref="shelf" class="shelf"
     :style="{
-      transform: `translate(${x}, ${y})`,
+      transform: `translate(${screenX}, ${screenY})`,
       width: (50*scale).toString()+'px',
       height: (50*scale).toString()+'px',
+      scale: scale
     }"
     >
       <div>cheesecake</div>
@@ -114,7 +138,7 @@ onMounted(() => {
     position: absolute;
     background-color: #161616;
     border-radius: 0 0 8px 8px;
-    // dimensions and positions in the template
+    // dimensions and positions in the js
   }
 }
 
