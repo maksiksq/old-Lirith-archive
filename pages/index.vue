@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import {info} from '@tauri-apps/plugin-log';
+import draggable from "vuedraggable";
 
 const scale = ref(1)
 const translateX = ref(0)
@@ -108,15 +109,14 @@ onMounted(() => {
        @wheel.prevent="zoom">
     <canvas ref="canvas"></canvas>
 <!--    time to reinvent grid wahooo-->
-    <div ref="shelf" class="shelf"
-    :style="{
+    <div ref="shelf" class="shelf">
+      <draggable>
+        <div>cheesecake</div>
+        <div>croissant</div>
+        <div>french</div>
+        <div>baguette</div>
+      </draggable>
 
-    }"
-    >
-      <div>cheesecake</div>
-      <div>croissant</div>
-      <div>french</div>
-      <div>baguette</div>
     </div>
   </div>
 </template>
@@ -138,7 +138,6 @@ onMounted(() => {
     width: 50px;
     height: 50px;
     // dimensions and positions in the js
-    //
   }
 }
 
