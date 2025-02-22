@@ -138,6 +138,7 @@ onMounted(() => {
     width: 50px;
     height: 50px;
     // dimensions and positions in the js
+    //
   }
 }
 
