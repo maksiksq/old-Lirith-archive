@@ -86,7 +86,18 @@ onMounted(() => {
        @wheel.prevent="zoom">
     <canvas ref="canvas"></canvas>
 <!--    time to reinvent grid wahooo-->
-    <div class="a"></div>
+    <div class="shelf"
+    :style="{
+      transform: `translate(${x}, ${y})`,
+      width: (50*scale).toString()+'px',
+      height: (50*scale).toString()+'px',
+    }"
+    >
+      <div>cheesecake</div>
+      <div>croissant</div>
+      <div>french</div>
+      <div>baguette</div>
+    </div>
   </div>
 </template>
 
@@ -98,6 +109,13 @@ onMounted(() => {
   overflow: hidden;
   position: relative;
   background-color: #222;
+
+  .shelf {
+    position: absolute;
+    background-color: #161616;
+    border-radius: 0 0 8px 8px;
+    // dimensions and positions in the template
+  }
 }
 
 canvas {
