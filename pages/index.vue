@@ -85,6 +85,8 @@ onMounted(() => {
        @mousedown="startPan"
        @wheel.prevent="zoom">
     <canvas ref="canvas"></canvas>
+<!--    time to reinvent grid wahooo-->
+    <div class="a"></div>
   </div>
 </template>
 
