@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import info from '@tauri-apps/plugin-log';
+import {info} from '@tauri-apps/plugin-log';
 
 const scale = ref(1)
 const translateX = ref(0)
@@ -92,8 +92,7 @@ function updatePositions() {
   screenX.value = worldX * scale.value + translateX.value
   screenY.value = worldY * scale.value + translateY.value
 
-  info(shelf.value.toString())
-  shelf.value.style.transform = `translate(${screenX}px, ${screenY}px) scale(${scale.value})`
+  shelf.value.style.transform = `translate(${screenX.value}px, ${screenY.value}px) scale(${scale.value})`
 }
 
 onMounted(() => {
