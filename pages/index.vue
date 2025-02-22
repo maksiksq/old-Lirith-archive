@@ -110,10 +110,7 @@ onMounted(() => {
 <!--    time to reinvent grid wahooo-->
     <div ref="shelf" class="shelf"
     :style="{
-      transform: `translate(${screenX}, ${screenY})`,
-      width: (50*scale).toString()+'px',
-      height: (50*scale).toString()+'px',
-      scale: scale
+
     }"
     >
       <div>cheesecake</div>
@@ -137,6 +134,9 @@ onMounted(() => {
     position: absolute;
     background-color: #161616;
     border-radius: 0 0 8px 8px;
+    transform-origin: top left;
+    width: 50px;
+    height: 50px;
     // dimensions and positions in the js
   }
 }
