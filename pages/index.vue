@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import {ref, onMounted, computed} from 'vue'
 import {info} from '@tauri-apps/plugin-log';
 import draggable from "vuedraggable";
 
@@ -14,10 +14,10 @@ const canvas = ref(null)
 
 const drawGrid = () => {
   const ctx = canvas.value.getContext('2d')
-  const { width, height } = canvas.value
+  const {width, height} = canvas.value
   ctx.clearRect(0, 0, width, height)
 
-  const gridSize = 50 * scale.value
+  const gridSize = 100 * scale.value
   const offsetX = translateX.value % gridSize
   const offsetY = translateY.value % gridSize
 
@@ -76,16 +76,16 @@ const zoom = (event) => {
   drawGrid()
 }
 
-const worldElementPos = ref({ x: 500, y: 500 })
+const worldElementPos = ref({x: 500, y: 500})
 
-const shelf = ref(null)
+const shelfWrapper = ref(null)
 
 const screenX = ref(500)
 const screenY = ref(500)
 
 
 function updatePositions() {
-  if (!shelf.value) return;
+  if (!shelfWrapper.value) return;
 
   const worldX = worldElementPos.value.x
   const worldY = worldElementPos.value.y
@@ -93,7 +93,17 @@ function updatePositions() {
   screenX.value = worldX * scale.value + translateX.value
   screenY.value = worldY * scale.value + translateY.value
 
-  shelf.value.style.transform = `translate(${screenX.value}px, ${screenY.value}px) scale(${scale.value})`
+  shelfWrapper.value.style.transform = `translate(${screenX.value}px, ${screenY.value}px) scale(${scale.value})`
+}
+
+const items = ref([
+  {name: "John", id: 0},
+  {name: "Joao", id: 1},
+  {name: "Jean", id: 2}
+],)
+
+function onDragEnd() {
+  info("drag")
 }
 
 onMounted(() => {
@@ -108,14 +118,21 @@ onMounted(() => {
        @mousedown="startPan"
        @wheel.prevent="zoom">
     <canvas ref="canvas"></canvas>
-<!--    time to reinvent grid wahooo-->
-    <div ref="shelf" class="shelf">
-      <draggable>
-        <div>cheesecake</div>
-        <div>croissant</div>
-        <div>french</div>
-        <div>baguette</div>
-      </draggable>
+    <!--    time to reinvent grid wahooo-->
+    <div ref="shelfWrapper" class="shelf-wrapper">
+      <div ref="shelf" class="shelf">
+        <draggable
+            v-model="items"
+            item-key="id"
+            class="shelf-inner"
+            @end="onDragEnd"
+            :force-fallback="true"
+        >
+          <template #item="{ element }">
+            <div class="shelf-item">{{ element.name }}</div>
+          </template>
+        </draggable>
+      </div>
 
       <!-- imagine this would DRAG ON -->
     </div>
@@ -131,15 +148,30 @@ onMounted(() => {
   position: relative;
   background-color: #222;
 
-  .shelf {
-    position: absolute;
-    background-color: #161616;
-    border-radius: 0 0 8px 8px;
+  .shelf-wrapper {
     transform-origin: top left;
-    width: 50px;
-    height: 50px;
-    // dimensions and positions in the js
+
+    .shelf {
+      position: absolute;
+      background-color: #161616;
+      border-radius: 0 0 8px 8px;
+
+
+      // dimensions and positions in the js
+
+      .shelf-inner {
+        .shelf-item {
+          width: 100%;
+          background-color: yellow;
+          color: black;
+
+          user-select: none;
+        }
+      }
+    }
   }
+
+
 }
 
 canvas {
@@ -149,4 +181,6 @@ canvas {
   width: 100%;
   height: 100%;
 }
+
+
 </style>
