@@ -117,6 +117,7 @@ onMounted(() => {
         <div>baguette</div>
       </draggable>
 
+      <!-- imagine this would DRAG ON -->
     </div>
   </div>
 </template>
