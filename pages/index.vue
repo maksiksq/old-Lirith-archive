@@ -10,6 +10,9 @@ const isPanning = ref(false)
 const startX = ref(0)
 const startY = ref(0)
 
+const size = ref(75)
+
+
 const canvas = ref(null)
 
 const drawGrid = () => {
@@ -17,7 +20,8 @@ const drawGrid = () => {
   const {width, height} = canvas.value
   ctx.clearRect(0, 0, width, height)
 
-  const gridSize = 100 * scale.value
+  const gridSize = size.value * scale.value
+
   const offsetX = translateX.value % gridSize
   const offsetY = translateY.value % gridSize
 
@@ -76,12 +80,13 @@ const zoom = (event) => {
   drawGrid()
 }
 
-const worldElementPos = ref({x: 500, y: 500})
+const worldElementPos = ref({x: 450, y: 450})
 
+const shelf = ref(null)
 const shelfWrapper = ref(null)
 
-const screenX = ref(500)
-const screenY = ref(500)
+const screenX = ref(450)
+const screenY = ref(450)
 
 
 function updatePositions() {
@@ -150,13 +155,13 @@ onMounted(() => {
 
   .shelf-wrapper {
     transform-origin: top left;
-
     .shelf {
       position: absolute;
       background-color: #161616;
       border-radius: 0 0 8px 8px;
 
-
+      width: 75px;
+      height: 75px;
       // dimensions and positions in the js
 
       .shelf-inner {
