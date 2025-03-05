@@ -82,36 +82,53 @@ const zoom = (event) => {
 
 const worldElementPos = ref({x: 450, y: 450})
 
-const shelf = ref(null)
-const shelfWrapper = ref(null)
+const trackedElems = reactive([])
 
 const screenX = ref(450)
 const screenY = ref(450)
 
-
 function updatePositions() {
-  if (!shelfWrapper.value) return;
+  info("ha")
+  trackedElems.forEach((el, i) => {
+    info("hai")
+    if (!el) return;
+    info("hais")
 
-  const worldX = worldElementPos.value.x
-  const worldY = worldElementPos.value.y
+    const worldX = worldElementPos.value.x
+    const worldY = worldElementPos.value.y
 
-  screenX.value = worldX * scale.value + translateX.value
-  screenY.value = worldY * scale.value + translateY.value
+    screenX.value = worldX * scale.value + translateX.value
+    screenY.value = worldY * scale.value + translateY.value
 
-  shelfWrapper.value.style.transform = `translate(${screenX.value}px, ${screenY.value}px) scale(${scale.value})`
+    el.style.transform = `translate(${screenX.value}px, ${screenY.value}px) scale(${scale.value})`
+  })
+
+
 }
 
 const items = ref([
-  {name: "John", id: 0},
-  {name: "Joao", id: 1},
-  {name: "Jean", id: 2}
+  {name: "Test", id: 0},
+  {name: "Teest", id: 1},
+  {name: "Teesst", id: 2}
 ],)
 
 function onDragEnd() {
   info("drag")
 }
 
+// in the future i can do it for v-fors
+const setElems = (el) => {
+  if (el) trackedElems.push(el);
+};
+
+const shelf = ref(null)
+const shelfWrapper = ref(null)
+
+
 onMounted(() => {
+  // defs for elems manually for now
+  if (shelfWrapper.value) trackedElems.push(shelfWrapper.value);
+
   resizeCanvas()
   window.addEventListener('resize', resizeCanvas)
 })
