@@ -22,7 +22,7 @@ defineExpose({
   shelfWrapper
 });
 
-const items = props.items;
+const items = ref(props.items);
 
 </script>
 
