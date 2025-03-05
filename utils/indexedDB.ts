@@ -23,7 +23,7 @@ export async function getShelf(id: number) {
     const db: IDBPDatabase<unknown> = await initDB();
     await db.get(STORE_NAME, id)
 }
-export async function getAllShelves(shelf: any) {
+export async function getAllShelves() {
     const db: IDBPDatabase<unknown> = await initDB();
     await db.getAll(STORE_NAME)
 }
@@ -33,7 +33,7 @@ export async function deleteShelf(id: number) {
     await db.delete(STORE_NAME, id);
 }
 
-export async function clearShelves(ves: any) {
+export async function clearShelves() {
     const db: IDBPDatabase<unknown> = await initDB();
     await db.clear(STORE_NAME);
 }

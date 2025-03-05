@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import draggable from "vuedraggable";
 import {ref} from "vue";
+
 const props = defineProps({
   items: Array,
 })
@@ -21,6 +22,10 @@ const shelfWrapper = ref(null)
 defineExpose({
   shelfWrapper
 });
+
+onMounted(({}) => {
+  loadShelves();
+})
 
 const items = ref(props.items);
 

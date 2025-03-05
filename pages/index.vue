@@ -1,7 +1,15 @@
-<script setup>
+<script setup lang="ts">
 import {ref, onMounted, computed} from 'vue'
 import {info} from '@tauri-apps/plugin-log';
 import Shelf from '@/components/Shelf.vue';
+
+import {saveShelf, deleteShelf, getShelf, getAllShelves, clearShelves} from "~/utils/indexedDB";
+
+const shelves: any = ref([])
+
+async function loadShelves(): Promise<any> {
+  shelves.value = await getAllShelves();
+}
 
 const scale = ref(1)
 const translateX = ref(0)
@@ -117,6 +125,8 @@ const setElems = (el) => {
 const shelfComp = ref(null);
 
 onMounted(() => {
+  loadShelves();
+
   // defs for elems manually for now
   const shelfWrapper = shelfComp.value?.shelfWrapper;
   if (shelfWrapper) trackedElems.push(shelfWrapper);
