@@ -73,9 +73,9 @@ const stopPan = () => {
   window.removeEventListener('mouseup', stopPan)
 }
 
-const zoom = (event) => {
+const zoom = (e) => {
   const zoomIntensity = 0.1
-  const newScale = Math.min(3, Math.max(0.5, scale.value - event.deltaY * zoomIntensity * 0.01))
+  const newScale = Math.min(3, Math.max(0.5, scale.value - e.deltaY * zoomIntensity * 0.01))
   scale.value = newScale
   drawGrid()
 }
@@ -112,8 +112,14 @@ const items = ref([
   {name: "Teesst", id: 2}
 ],)
 
-function onDragEnd() {
-  info("drag")
+function onDragStart(e) {
+  console.log(e.item)
+  e.item.style.cursor = "grabbing";
+  e.item.style.zIndex = "9999";
+
+}
+function onDragEnd(e) {
+  e.item.style.cursor = "grab";
 }
 
 // in the future i can do it for v-fors
@@ -124,6 +130,9 @@ const setElems = (el) => {
 const shelf = ref(null)
 const shelfWrapper = ref(null)
 
+const data = reactive({
+
+})
 
 onMounted(() => {
   // defs for elems manually for now
@@ -147,6 +156,7 @@ onMounted(() => {
             v-model="items"
             item-key="id"
             class="shelf-inner"
+            @start="onDragStart"
             @end="onDragEnd"
             :force-fallback="true"
         >
@@ -155,14 +165,34 @@ onMounted(() => {
           </template>
         </draggable>
       </div>
-
-      <!-- imagine this would DRAG ON -->
+    </div>
+    <div ref="shelfWrapper" class="shelf-wrapper">
+      <div ref="shelf" class="shelf">
+        <draggable
+            v-model="items"
+            item-key="id"
+            class="shelf-inner"
+            @start="onDragStart"
+            @end="onDragEnd"
+            :force-fallback="true"
+        >
+          <template #item="{ element }">
+            <div class="shelf-item">{{ element.name }}</div>
+          </template>
+        </draggable>
+      </div>
     </div>
   </div>
 </template>
 
 
 <style scoped lang="scss">
+// tbh i should use togglable classes so much more instead of inline styles
+.grabbing {
+  background-color: red !important;
+  cursor: grabbing;
+}
+
 .grid-container {
   width: 100vw;
   height: 100vh;
@@ -187,6 +217,8 @@ onMounted(() => {
           background-color: yellow;
           color: black;
 
+          z-index: 99;
+          cursor: grab;
           user-select: none;
         }
       }
