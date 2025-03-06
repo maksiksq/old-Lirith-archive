@@ -119,7 +119,7 @@ const items = ref([
 
 // in the future i can do it for v-fors
 const setElems = (el: any) => {
-  if (el) trackedElems.push(el: any);
+  if (el) trackedElems.push(el);
 };
 
 const shelfComp = ref(null);
