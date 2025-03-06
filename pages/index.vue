@@ -80,7 +80,7 @@ const stopPan = () => {
   window.removeEventListener('mouseup', stopPan)
 }
 
-const zoom = (e) => {
+const zoom = (e: any) => {
   const zoomIntensity = 0.1
   const newScale = Math.min(3, Math.max(0.5, scale.value - e.deltaY * zoomIntensity * 0.01))
   scale.value = newScale
@@ -118,8 +118,8 @@ const items = ref([
 ],)
 
 // in the future i can do it for v-fors
-const setElems = (el) => {
-  if (el) trackedElems.push(el);
+const setElems = (el: any) => {
+  if (el) trackedElems.push(el: any);
 };
 
 const shelfComp = ref(null);
