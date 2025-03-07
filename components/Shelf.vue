@@ -23,11 +23,14 @@ defineExpose({
   shelfWrapper
 });
 
-onMounted(({}) => {
-  loadShelves();
+const items = ref(props.items);
+
+
+onMounted(() => {
+  console.log(items);
+  // loadShelves();
 })
 
-const items = ref(props.items);
 
 </script>
 

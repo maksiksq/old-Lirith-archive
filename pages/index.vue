@@ -58,7 +58,7 @@ const resizeCanvas = () => {
   drawGrid()
 }
 
-const startPan = (event) => {
+const startPan = (event: any) => {
   if (event.button !== 1) return
   isPanning.value = true
   startX.value = event.clientX - translateX.value
@@ -67,7 +67,7 @@ const startPan = (event) => {
   window.addEventListener('mouseup', stopPan)
 }
 
-const pan = (event) => {
+const pan = (event: any) => {
   if (!isPanning.value) return
   translateX.value = event.clientX - startX.value
   translateY.value = event.clientY - startY.value
