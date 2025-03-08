@@ -20,10 +20,12 @@ const startY = ref(0)
 
 const size = ref(75)
 
-const canvas = ref(null)
+const canvas = ref<HTMLCanvasElement | null>(null)
 
 const drawGrid = () => {
+  if (!canvas.value) return
   const ctx = canvas.value.getContext('2d')
+  if (!ctx) return
   const {width, height} = canvas.value
   ctx.clearRect(0, 0, width, height)
 
@@ -53,8 +55,8 @@ const drawGrid = () => {
 
 const resizeCanvas = () => {
   if (!canvas.value) return
-  canvas.value.width = window.innerWidth
-  canvas.value.height = window.innerHeight
+  canvas.value.width = window.innerWidth;
+  canvas.value.height = window.innerHeight;
   drawGrid()
 }
 
@@ -89,13 +91,13 @@ const zoom = (e: any) => {
 
 const worldElementPos = ref({x: 450, y: 450})
 
-const trackedElems = reactive([])
+const trackedElems: Array<any> = reactive([])
 
 const screenX = ref(450)
 const screenY = ref(450)
 
 function updatePositions() {
-  trackedElems.forEach((el, i) => {
+  trackedElems.forEach((el: HTMLElement, i) => {
     if (!el) return;
 
 
@@ -118,17 +120,18 @@ const items = ref([
 ],)
 
 // in the future i can do it for v-fors
-const setElems = (el: any) => {
+const setElems = (el: HTMLElement) => {
   if (el) trackedElems.push(el);
 };
 
-const shelfComp = ref(null);
+const shelfComp = ref<HTMLCanvasElement | null>(null);
 
 onMounted(() => {
   loadShelves();
 
   // defs for elems manually for now
-  const shelfWrapper = shelfComp.value?.shelfWrapper;
+  // @ts-ignore
+  const shelfWrapper: HTMLElement = shelfComp.value?.shelfWrapper;
   if (shelfWrapper) trackedElems.push(shelfWrapper);
 
 
