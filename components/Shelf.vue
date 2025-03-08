@@ -29,6 +29,7 @@ const items = ref(props.items);
 onMounted(() => {
   console.log(items);
   // loadShelves();
+  //
 })
 
 
