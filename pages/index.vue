@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import {ref, onMounted, computed, watch} from 'vue'
-import Shelf from '~/components/Shelf.vue';
+import {ref, onMounted, computed} from 'vue'
+import Shelf from '../components/Shelf.vue';
 
 import {saveShelf, deleteShelf, getShelf, getAllShelves, clearShelves} from "~/utils/indexedDB";
 
