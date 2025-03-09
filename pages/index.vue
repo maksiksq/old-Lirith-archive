@@ -7,9 +7,26 @@ import {saveShelf, deleteShelf, getShelf, getAllShelves, clearShelves} from "~/u
 
 const shelves: any = ref([])
 
+const elem1 = ref(null)
+const elem1Content = ref<string>('')
+
 async function loadShelves(): Promise<any> {
-  shelves.value = await getAllShelves();
-  console.log(shelves.value);
+  console.log('Loading shelves...')
+
+  // Take the shelf from the DB, turn it into a real, tangible element
+  const _string = await getShelf(1);
+  const _div: HTMLElement = document.createElement('div');
+  // here we write down the element as a string (indexedDB can't store HTML
+  // elems but we need it anyways so it's a good thing), then we send it to
+  // the template's v-html which cooks magic, and we also write down the div
+  // as a ref
+  elem1Content.value = _string.html;
+  _div.innerHTML = _string.html;
+  shelves.value[0] = _div;
+}
+
+async function handleTest(): Promise<void> {
+  await saveShelf(trackedElems[0], 1);
 }
 
 const scale = ref(1)
@@ -100,7 +117,7 @@ const screenY = ref(450)
 function updatePositions() {
   trackedElems.forEach((el: HTMLElement, i) => {
     if (!el) return;
-
+    console.log(el);
 
     const worldX = worldElementPos.value.x
     const worldY = worldElementPos.value.y
@@ -149,7 +166,9 @@ onMounted(() => {
        @mousedown="startPan"
        @wheel.prevent="zoom">
     <canvas ref="canvas"></canvas>
-    <button @click="saveShelf()"></button>
+    <div v-if="elem1Content" v-html="elem1Content"></div>
+    <button @click="handleTest()"></button>
+    <button @click="loadShelves()"></button>
     <!--    this used to say "time to reinvent grid" before i reinvented grid-->
     <Shelf ref="shelfComp" :items="items"></Shelf>
   </div>
@@ -157,6 +176,14 @@ onMounted(() => {
 
 
 <style scoped lang="scss">
+// temp btn
+button {
+  position: relative;
+  width: 150px;
+  height: 100px;
+}
+
+
 // tbh i should use togglable classes so much more instead of inline styles
 .grabbing {
   background-color: red !important;
@@ -179,5 +206,7 @@ canvas {
   height: 100%;
 }
 
-
+// after adding the cherry on top, your cake is ready, you can also add
+// some other toppings to your liking, thank you for seeing my cake recipe,
+// share it on bluesky or something idk.
 </style>
