@@ -15,6 +15,10 @@ async function initDB() {
 }
 
 export async function saveShelf(shelf: any) {
+    if (!shelf) {
+        console.error("ALERT, one of the shelves is a null. Hide, run, burn, concieve anarchy, we're all doomed, the world will perish...")
+        return;
+    }
     const db: IDBPDatabase<unknown> = await initDB();
     await db.put(STORE_NAME, shelf)
 }

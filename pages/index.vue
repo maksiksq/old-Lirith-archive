@@ -9,6 +9,7 @@ const shelves: any = ref([])
 
 async function loadShelves(): Promise<any> {
   shelves.value = await getAllShelves();
+  console.log(shelves.value);
 }
 
 const scale = ref(1)
@@ -113,6 +114,8 @@ function updatePositions() {
 
 }
 
+
+
 const items = ref([
   {name: "Test", id: 0},
   {name: "Teest", id: 1},
@@ -146,6 +149,7 @@ onMounted(() => {
        @mousedown="startPan"
        @wheel.prevent="zoom">
     <canvas ref="canvas"></canvas>
+    <button @click="saveShelf()"></button>
     <!--    this used to say "time to reinvent grid" before i reinvented grid-->
     <Shelf ref="shelfComp" :items="items"></Shelf>
   </div>
