@@ -1,10 +1,25 @@
 <script setup lang="ts">
-import {ref, onMounted, computed} from 'vue'
-import Shelf from '../components/Shelf.vue';
+import {ref, onMounted, computed, watch} from 'vue'
+import Shelf from '~/components/Shelf.vue';
+
+import { useRuntimeConfig } from '#imports';
 
 import {saveShelf, deleteShelf, getShelf, getAllShelves, clearShelves} from "~/utils/indexedDB";
 
-const shelves: any = ref([])
+const shelfData: any = ref({
+  shelf1: {
+    isRad: false,
+    isIdkSomething: false,
+  },
+  shelf2: {
+    isRad: false,
+    isIdkSomething: false,
+  },
+  shelf3: {
+    isRad: false,
+    isIdkSomething: false,
+  }
+})
 
 const elem1Content = ref<string>('')
 const shelfElem = ref<HTMLElement | null>(null)
@@ -19,25 +34,37 @@ watch(shelfElem, (newVal) => {
   }
 });
 
+interface ShelfData {
+  html: string;
+}
+
 async function loadShelves(): Promise<any> {
   console.log('Loading shelves...')
-
+  if (!import.meta.client) {
+    return;
+  }
   // Take the shelf from the DB, turn it into a real, tangible element
-  const _string = await getShelf(1);
+  const _string = ref<ShelfData | null>(await getShelf(1));
+  if (!_string.value) {
+    _string.value = {html: "<div class='hollow'></div>"};
+    console.log(_string.value);
+  }
   const _div: HTMLElement = document.createElement('div');
   // here we write down the element as a string (indexedDB can't store HTML
   // elems but we need it anyways so it's a good thing), then we send it to
   // the template's v-html which cooks magic, and we also write down the div
   // as a ref
-  elem1Content.value = _string.html;
-  _div.innerHTML = _string.html;
+  elem1Content.value = _string.value.html;
+  _div.innerHTML = _string.value.html;
   // extract the child to prevent an unintended wrapper
   // shelves.value[0] = _div;
   // trackedElems.push(_div)
 }
 
 async function handleTest(): Promise<void> {
-  await saveShelf(trackedElems[0], 1);
+  await saveShelf({
+    isRad: false,
+  }, 1);
 }
 
 const scale = ref(1)
@@ -164,18 +191,31 @@ const setElems = (el: HTMLElement) => {
 
 const shelfComp = ref<HTMLCanvasElement | null>(null);
 
-onMounted(() => {
-  loadShelves();
+onMounted(async () => {
+  if (!import.meta.client) {
+    console.log('NOT RUNNING ON CLIENT (SOMEHOW)');
+    return
+  }
+  if (import.meta.client) {
+    console.log('Running on client)');
+  }
+  await loadShelves();
 
+  console.log("he")
   // defs for elems manually for now
   // @ts-ignore
   const shelfWrapper: HTMLElement = shelfComp.value?.shelfWrapper;
   if (shelfWrapper) trackedElems.push(shelfWrapper);
+  console.log(trackedElems)
 
+  console.log("hee")
 
   resizeCanvas()
   window.addEventListener('resize', resizeCanvas)
 })
+
+// future: Do not send the element itself to the db,
+// instead just the data and render it all here live
 </script>
 
 
@@ -188,7 +228,7 @@ onMounted(() => {
     <button @click="handleTest"></button>
     <button @click="loadShelves"></button>
     <!--    this used to say "time to reinvent grid" before i reinvented grid-->
-    <Shelf ref="shelfComp" :items="items"></Shelf>
+    <Shelf v-for="shelf in shelfData" ref="shelfComp" :items="items"></Shelf>
   </div>
 </template>
 
