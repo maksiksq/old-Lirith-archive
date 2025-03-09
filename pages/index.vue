@@ -7,8 +7,18 @@ import {saveShelf, deleteShelf, getShelf, getAllShelves, clearShelves} from "~/u
 
 const shelves: any = ref([])
 
-const elem1 = ref(null)
 const elem1Content = ref<string>('')
+const shelfElem = ref<HTMLElement | null>(null)
+
+watch(shelfElem, (newVal) => {
+  if (newVal) {
+    const elChild = newVal.firstElementChild as HTMLElement;
+    if (elChild) {
+      trackedElems.push(elChild); // Now tracking the actual DOM element
+      updatePositions(); // Apply transformations after it's mounted
+    }
+  }
+});
 
 async function loadShelves(): Promise<any> {
   console.log('Loading shelves...')
@@ -22,7 +32,9 @@ async function loadShelves(): Promise<any> {
   // as a ref
   elem1Content.value = _string.html;
   _div.innerHTML = _string.html;
-  shelves.value[0] = _div;
+  // extract the child to prevent an unintended wrapper
+  // shelves.value[0] = _div;
+  // trackedElems.push(_div)
 }
 
 async function handleTest(): Promise<void> {
@@ -115,20 +127,27 @@ const screenX = ref(450)
 const screenY = ref(450)
 
 function updatePositions() {
+  const offsetX = ref(0)
+  const offsetY = ref(0)
   trackedElems.forEach((el: HTMLElement, i) => {
     if (!el) return;
-    console.log(el);
+
+    // context: v-html always puts the thing in a wrapper
+    // to avoid that we use the child
+    const elChild = el.childNodes[0] as HTMLElement;
+    if (!elChild) return;
+    console.log(elChild)
 
     const worldX = worldElementPos.value.x
     const worldY = worldElementPos.value.y
 
-    screenX.value = worldX * scale.value + translateX.value
-    screenY.value = worldY * scale.value + translateY.value
+    screenX.value = worldX * scale.value + translateX.value + offsetX.value
+    screenY.value = worldY * scale.value + translateY.value + offsetY.value
 
     el.style.transform = `translate(${screenX.value}px, ${screenY.value}px) scale(${scale.value})`
+
+    offsetX.value += 75;
   })
-
-
 }
 
 
@@ -166,9 +185,9 @@ onMounted(() => {
        @mousedown="startPan"
        @wheel.prevent="zoom">
     <canvas ref="canvas"></canvas>
-    <div v-if="elem1Content" v-html="elem1Content"></div>
-    <button @click="handleTest()"></button>
-    <button @click="loadShelves()"></button>
+    <div ref="shelfElem" v-if="elem1Content" v-html="elem1Content"></div>
+    <button @click="handleTest"></button>
+    <button @click="loadShelves"></button>
     <!--    this used to say "time to reinvent grid" before i reinvented grid-->
     <Shelf ref="shelfComp" :items="items"></Shelf>
   </div>
