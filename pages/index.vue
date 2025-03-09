@@ -138,11 +138,11 @@ function updatePositions() {
     if (!elChild) return;
     console.log(elChild)
 
-    const worldX = worldElementPos.value.x
-    const worldY = worldElementPos.value.y
+    const worldX = worldElementPos.value.x + offsetX.value
+    const worldY = worldElementPos.value.y + offsetY.value
 
-    screenX.value = worldX * scale.value + translateX.value + offsetX.value
-    screenY.value = worldY * scale.value + translateY.value + offsetY.value
+    screenX.value = worldX * scale.value + translateX.value
+    screenY.value = worldY * scale.value + translateY.value
 
     el.style.transform = `translate(${screenX.value}px, ${screenY.value}px) scale(${scale.value})`
 
